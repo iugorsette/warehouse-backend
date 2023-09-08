@@ -8,7 +8,15 @@ import { usersProviders } from 'src/repository/providers/users.providers';
 @Module({
   imports: [DatabaseModule],
   controllers: [UsersController],
-  providers: [AuthService, UsersService, ...usersProviders],
+  providers: [
+    AuthService,
+    UsersService,
+    ...usersProviders,
+    {
+      provide: 'SECRET_KEY',
+      useValue: process.env.SECRET_KEY,
+    },
+  ],
   exports: [UsersService],
 })
 export class UsersModule {}

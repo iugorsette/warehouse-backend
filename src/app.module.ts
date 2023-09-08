@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { EquipmentModule } from './equipmet/equipment.module';
 import { CollaboratorModule } from './collaborator/collaborator.module';
+import { AuthGuard } from './auth/auth.guard';
 
 @Module({
   imports: [
@@ -21,6 +22,13 @@ import { CollaboratorModule } from './collaborator/collaborator.module';
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    AuthGuard,
+    {
+      provide: 'SECRET_KEY',
+      useValue: process.env.SECRET_KEY,
+    },
+  ],
 })
 export class AppModule {}

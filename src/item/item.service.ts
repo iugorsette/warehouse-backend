@@ -1,33 +1,33 @@
-import { Model } from 'mongoose';
 import { Injectable, Inject } from '@nestjs/common';
 import { IItem } from './interfaces/item.interface';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ItemService {
-  constructor(@Inject('ITEM_MODEL') private itemModel: Model<IItem>) {}
+  constructor(
+    @Inject('ITEM_REPOSITORY') private itemRepository: Repository<IItem>,
+  ) {}
 
   async create(item: IItem): Promise<IItem> {
-    const createdCat = new this.itemModel(item);
-    return createdCat.save();
+    const created = this.itemRepository.create(item);
+    return this.itemRepository.save(created);
   }
 
   async findAll(): Promise<IItem[]> {
-    return this.itemModel.find().exec();
+    return this.itemRepository.find();
   }
 
   async update(item: IItem, id: string): Promise<void> {
-    const { acknowledged } = await this.itemModel
-      .updateOne({ _id: id }, item)
-      .exec();
-    if (!acknowledged) {
+    const { affected } = await this.itemRepository.update({ id }, item);
+    if (!affected) {
       throw new Error('Item not found');
     }
     return null;
   }
 
   async delete(id: string): Promise<void> {
-    const { deletedCount } = await this.itemModel.deleteOne({ _id: id }).exec();
-    if (!deletedCount) {
+    const { affected } = await this.itemRepository.delete({ id });
+    if (!affected) {
       throw new Error('Item not found');
     }
     return null;

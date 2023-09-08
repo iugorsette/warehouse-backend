@@ -1,11 +1,11 @@
-import { Connection } from 'mongoose';
-import { CollaboratorSchema } from '../schemas/collaborator.schema';
+import { Collaborator } from '../entity/collaborator.entity';
+import { DataSource } from 'typeorm';
 
 export const collaboratorProviders = [
   {
-    provide: 'COLLABORATOR_MODEL',
-    useFactory: (connection: Connection) =>
-      connection.model('Collaborator', CollaboratorSchema),
-    inject: ['DATABASE_CONNECTION'],
+    provide: 'COLLABORATOR_REPOSITORY',
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(Collaborator),
+    inject: ['DATA_SOURCE'],
   },
 ];

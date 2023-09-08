@@ -7,6 +7,13 @@ import { itemsProviders } from 'src/repository/providers/items.providers';
 @Module({
   imports: [DatabaseModule],
   controllers: [ItemController],
-  providers: [ItemService, ...itemsProviders],
+  providers: [
+    ItemService,
+    ...itemsProviders,
+    {
+      provide: 'SECRET_KEY',
+      useValue: process.env.SECRET_KEY,
+    },
+  ],
 })
 export class ItemModule {}
