@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
 
-export const ItemSchema = new mongoose.Schema({
+export const CollaboratorSchema = new mongoose.Schema({
   id: String,
-  title: String,
-  description: String,
+  name: String,
+  role: String,
   created_at: Date,
   updated_at: Date,
 });

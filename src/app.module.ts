@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './users/user.module';
+import { UsersModule } from './users/users.module';
 import { ItemModule } from './item/item.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { EquipmentModule } from './equipmet/equipment.module';
+import { CollaboratorModule } from './collaborator/collaborator.module';
 
 @Module({
   imports: [
@@ -11,8 +14,11 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    UserModule,
+    AuthModule,
+    CollaboratorModule,
+    EquipmentModule,
     ItemModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

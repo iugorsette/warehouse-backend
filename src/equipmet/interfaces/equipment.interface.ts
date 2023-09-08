@@ -1,6 +1,6 @@
-export interface IItem {
+export interface IEquipment {
   id: string;
-  property: string;
+  title: string;
   description: string;
   created_at: Date;
   updated_at: Date;

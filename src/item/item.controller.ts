@@ -9,7 +9,10 @@ import {
 } from '@nestjs/common';
 import { IItem } from './interfaces/item.interface';
 import { ItemService } from './item.service';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { UseGuards } from '@nestjs/common';
 
+@UseGuards(AuthGuard)
 @Controller('items')
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}
@@ -26,7 +29,7 @@ export class ItemController {
   @Put()
   update(@Body() item: IItem, @Query('id') id: string) {
     this.itemService.update(item, id);
-    return `This action updates a ${item.title} item`;
+    return `This action updates a ${item.property} item`;
   }
 
   @Delete()
