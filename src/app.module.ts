@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { EquipmentModule } from './equipmet/equipment.module';
 import { CollaboratorModule } from './collaborator/collaborator.module';
 import { AuthGuard } from './auth/auth.guard';
+import { SharedModule } from './shared/shared.module';
+import { DepartmentModule } from './department/department.module';
 
 @Module({
   imports: [
@@ -20,15 +22,10 @@ import { AuthGuard } from './auth/auth.guard';
     EquipmentModule,
     ItemModule,
     UsersModule,
+    SharedModule,
+    DepartmentModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    AuthGuard,
-    {
-      provide: 'SECRET_KEY',
-      useValue: process.env.SECRET_KEY,
-    },
-  ],
+  providers: [AppService, AuthGuard],
 })
 export class AppModule {}

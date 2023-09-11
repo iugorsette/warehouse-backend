@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class DepartmentService {
   constructor(
-    @Inject('DEPARTMENT_MODEL')
+    @Inject('DEPARTMENT_REPOSITORY')
     private departmentRepository: Repository<IDepartment>,
   ) {}
 

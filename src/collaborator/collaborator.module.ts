@@ -7,13 +7,6 @@ import { CollaboratorService } from './collaborator.service';
 @Module({
   imports: [DatabaseModule],
   controllers: [CollaboratorController],
-  providers: [
-    CollaboratorService,
-    ...collaboratorProviders,
-    {
-      provide: 'SECRET_KEY',
-      useValue: process.env.SECRET_KEY,
-    },
-  ],
+  providers: [CollaboratorService, ...collaboratorProviders],
 })
 export class CollaboratorModule {}

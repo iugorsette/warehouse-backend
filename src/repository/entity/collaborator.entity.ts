@@ -4,12 +4,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   CreateDateColumn,
+  ManyToOne,
 } from 'typeorm';
+import { Department } from './deparment.entity';
 
 @Entity()
 export class Collaborator {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ length: 500 })
   name: string;
@@ -22,4 +24,7 @@ export class Collaborator {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
+
+  @ManyToOne(() => Department, (department) => department.collaborators)
+  department: Department;
 }

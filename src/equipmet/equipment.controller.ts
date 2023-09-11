@@ -13,12 +13,18 @@ import { UseGuards } from '@nestjs/common';
 import { IEquipment } from './interfaces/equipment.interface';
 
 @UseGuards(AuthGuard)
-@Controller('equipment')
+@Controller('equipments')
 export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) {}
   @Get()
-  findAll(): Promise<IEquipment[]> {
-    return this.equipmentService.findAll();
+  findAll(
+    @Query() query?: { offset?: number; limit?: number; title?: string },
+  ): Promise<IEquipment[]> {
+    // if (query && query.offset && query.limit) {
+    //   return this.equipmentService.findAll(query);
+    // }
+    // return this.equipmentService.findAll();
+    return this.equipmentService.findAll(query);
   }
 
   @Post()
