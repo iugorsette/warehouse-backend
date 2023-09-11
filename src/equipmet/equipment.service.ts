@@ -1,37 +1,55 @@
-import { Model } from 'mongoose';
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 import { IEquipment } from './interfaces/equipment.interface';
 
 @Injectable()
 export class EquipmentService {
   constructor(
-    @Inject('EQUIPMENT_MODEL') private equipmentModel: Model<IEquipment>,
+    @Inject('EQUIPMENT_REPOSITORY')
+    private equipmentRepository: Repository<IEquipment>,
   ) {}
 
   async create(equipment: IEquipment): Promise<IEquipment> {
-    const created = new this.equipmentModel(equipment);
-    return created.save();
+    const created = this.equipmentRepository.create(equipment);
+    return this.equipmentRepository.save(created);
   }
 
-  async findAll(): Promise<IEquipment[]> {
-    return this.equipmentModel.find().exec();
+  async findAll(query?: IQuery): Promise<QueryResponse<IEquipment>> {
+    const findOptions: FindManyOptions<IEquipment> = {
+      take: query?.limit || 100,
+      skip: query?.offset || 0,
+      where: {},
+      relations: ['items', 'collaborators'],
+    };
+
+    if (query?.title) {
+      findOptions.where['title'] = Like(`%${query.title}%`);
+    }
+
+    const [equipments, total] =
+      await this.equipmentRepository.findAndCount(findOptions);
+
+    return {
+      data: equipments,
+      total,
+      offset: Number(query?.offset) || 0,
+    };
   }
 
   async update(equipment: IEquipment, id: string): Promise<void> {
-    const { acknowledged } = await this.equipmentModel
-      .updateOne({ _id: id }, equipment)
-      .exec();
-    if (!acknowledged) {
-      throw new Error('Equipment not found');
+    const { affected } = await this.equipmentRepository.update(
+      { id },
+      equipment,
+    );
+    if (!affected) {
+      throw new NotFoundException('Equipment not found');
     }
     return null;
   }
 
   async delete(id: string): Promise<void> {
-    const { deletedCount } = await this.equipmentModel
-      .deleteOne({ _id: id })
-      .exec();
-    if (!deletedCount) {
+    const { affected } = await this.equipmentRepository.delete({ id });
+    if (!affected) {
       throw new Error('Equipment not found');
     }
     return null;

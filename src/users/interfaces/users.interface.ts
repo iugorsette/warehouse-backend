@@ -1,7 +1,7 @@
 export interface IUser {
-  readonly _id: string;
+  readonly id: string;
   readonly name: string;
-  readonly email: string;
+  readonly username: string;
   readonly password: string;
   readonly created_at: Date;
   readonly updated_at: Date;

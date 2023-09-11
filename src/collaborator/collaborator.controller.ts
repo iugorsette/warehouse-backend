@@ -17,8 +17,8 @@ import { CollaboratorService } from './collaborator.service';
 export class CollaboratorController {
   constructor(private readonly collaboratorService: CollaboratorService) {}
   @Get()
-  findAll(): Promise<ICollaborator[]> {
-    return this.collaboratorService.findAll();
+  findAll(@Query() query: IQuery): Promise<QueryResponse<ICollaborator>> {
+    return this.collaboratorService.findAll(query);
   }
 
   @Post()

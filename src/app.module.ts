@@ -7,6 +7,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { EquipmentModule } from './equipmet/equipment.module';
 import { CollaboratorModule } from './collaborator/collaborator.module';
+import { AuthGuard } from './auth/auth.guard';
+import { SharedModule } from './shared/shared.module';
+import { DepartmentModule } from './department/department.module';
 
 @Module({
   imports: [
@@ -19,8 +22,10 @@ import { CollaboratorModule } from './collaborator/collaborator.module';
     EquipmentModule,
     ItemModule,
     UsersModule,
+    SharedModule,
+    DepartmentModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthGuard],
 })
 export class AppModule {}

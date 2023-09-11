@@ -1,11 +1,11 @@
-import { Connection } from 'mongoose';
-import { DepartmentSchema } from '../schemas/deparment.schema';
+import { Department } from '../entity/deparment.entity';
+import { DataSource } from 'typeorm';
 
 export const departmentProviders = [
   {
-    provide: 'DEPARTMENT_MODEL',
-    useFactory: (connection: Connection) =>
-      connection.model('Department', DepartmentSchema),
-    inject: ['DATABASE_CONNECTION'],
+    provide: 'DEPARTMENT_REPOSITORY',
+    useFactory: (dataSource: DataSource) =>
+      dataSource.getRepository(Department),
+    inject: ['DATA_SOURCE'],
   },
 ];

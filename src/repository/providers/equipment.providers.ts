@@ -1,11 +1,10 @@
-import { Connection } from 'mongoose';
-import { EquipmentSchema } from '../schemas/equipment.schema';
+import { Equipment } from '../entity/equipment.entity';
+import { DataSource } from 'typeorm';
 
 export const equipmentProviders = [
   {
-    provide: 'EQUIPMENT_MODEL',
-    useFactory: (connection: Connection) =>
-      connection.model('Equipment', EquipmentSchema),
-    inject: ['DATABASE_CONNECTION'],
+    provide: 'EQUIPMENT_REPOSITORY',
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(Equipment),
+    inject: ['DATA_SOURCE'],
   },
 ];
