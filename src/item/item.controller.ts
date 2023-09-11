@@ -17,8 +17,8 @@ import { UseGuards } from '@nestjs/common';
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}
   @Get()
-  findAll(): Promise<IItem[]> {
-    return this.itemService.findAll();
+  findAll(@Query() query: IQuery): Promise<QueryResponse<IItem>> {
+    return this.itemService.findAll(query);
   }
 
   @Post()

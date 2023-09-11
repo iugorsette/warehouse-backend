@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { IDepartment } from './interfaces/department.interface';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class DepartmentService {
@@ -14,8 +14,26 @@ export class DepartmentService {
     return this.departmentRepository.save(created);
   }
 
-  async findAll(): Promise<IDepartment[]> {
-    return this.departmentRepository.find();
+  async findAll(query: IQuery): Promise<QueryResponse<IDepartment>> {
+    const findOptions: FindManyOptions<IDepartment> = {
+      take: query?.limit || 100,
+      skip: query?.offset || 0,
+      where: {},
+      relations: ['collaborators'],
+    };
+
+    if (query?.name) {
+      findOptions.where['name'] = Like(`%${query.name}%`);
+    }
+
+    const [departments, total] =
+      await this.departmentRepository.findAndCount(findOptions);
+
+    return {
+      data: departments,
+      total,
+      offset: Number(query?.offset) || 0,
+    };
   }
 
   async update(department: IDepartment, id: string): Promise<void> {

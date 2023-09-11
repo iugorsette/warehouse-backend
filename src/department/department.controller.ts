@@ -17,8 +17,8 @@ import { DepartmentService } from './department.service';
 export class DepartmentController {
   constructor(private readonly departmentService: DepartmentService) {}
   @Get()
-  findAll(): Promise<IDepartment[]> {
-    return this.departmentService.findAll();
+  findAll(@Query() query: IQuery): Promise<QueryResponse<IDepartment>> {
+    return this.departmentService.findAll(query);
   }
 
   @Post()

@@ -5,15 +5,18 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Department } from './deparment.entity';
+import { Equipment } from './equipment.entity';
 
 @Entity()
 export class Collaborator {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 500 })
+  @Column({ length: 500, unique: true })
   name: string;
 
   @Column('text')
@@ -27,4 +30,8 @@ export class Collaborator {
 
   @ManyToOne(() => Department, (department) => department.collaborators)
   department: Department;
+
+  @ManyToMany(() => Equipment, (equipment) => equipment.collaborators)
+  @JoinTable()
+  equipments: Equipment[];
 }

@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ICollaborator } from './interfaces/collaborator.interface';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class CollaboratorService {
@@ -14,8 +14,26 @@ export class CollaboratorService {
     return this.collaboratorRepository.save(created);
   }
 
-  async findAll(): Promise<ICollaborator[]> {
-    return this.collaboratorRepository.find();
+  async findAll(query: IQuery): Promise<QueryResponse<ICollaborator>> {
+    const findOptions: FindManyOptions<ICollaborator> = {
+      take: query?.limit || 100,
+      skip: query?.offset || 0,
+      where: {},
+      relations: ['department'],
+    };
+
+    if (query?.title) {
+      findOptions.where['title'] = Like(`%${query.title}%`);
+    }
+
+    const [departments, total] =
+      await this.collaboratorRepository.findAndCount(findOptions);
+
+    return {
+      data: departments,
+      total,
+      offset: Number(query?.offset) || 0,
+    };
   }
 
   async update(collaborator: ICollaborator, id: string): Promise<void> {

@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { EquipmentService } from './equipment.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
@@ -17,13 +9,7 @@ import { IEquipment } from './interfaces/equipment.interface';
 export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) {}
   @Get()
-  findAll(
-    @Query() query?: { offset?: number; limit?: number; title?: string },
-  ): Promise<IEquipment[]> {
-    // if (query && query.offset && query.limit) {
-    //   return this.equipmentService.findAll(query);
-    // }
-    // return this.equipmentService.findAll();
+  findAll(@Query() query: IQuery): Promise<QueryResponse<IEquipment>> {
     return this.equipmentService.findAll(query);
   }
 
@@ -38,9 +24,9 @@ export class EquipmentController {
     return `This action updates a ${equipment.title} equipment`;
   }
 
-  @Delete()
-  delete(@Query('id') id: string) {
-    this.equipmentService.delete(id);
-    return `This action removes a #${id} equipment`;
-  }
+  // @Delete()
+  // delete(@Query('id') id: string) {
+  //   this.equipmentService.delete(id);
+  //   return `This action removes a #${id} equipment`;
+  // }
 }

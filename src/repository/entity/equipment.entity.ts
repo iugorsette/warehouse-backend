@@ -4,7 +4,12 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
+import { Item } from './item.entity';
+import { Collaborator } from './collaborator.entity';
 
 @Entity()
 export class Equipment {
@@ -22,4 +27,11 @@ export class Equipment {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToMany(() => Item, (item) => item.equipment)
+  items: Item[];
+
+  @ManyToMany(() => Collaborator, (collaborator) => collaborator.equipments)
+  @JoinTable()
+  collaborators: Collaborator[];
 }

@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { IEquipment } from './interfaces/equipment.interface';
 
@@ -14,26 +14,24 @@ export class EquipmentService {
     return this.equipmentRepository.save(created);
   }
 
-  async findAll(query?: {
-    offset?: number;
-    limit?: number;
-    title?: string;
-  }): Promise<IEquipment[] | any> {
+  async findAll(query?: IQuery): Promise<QueryResponse<IEquipment>> {
     const findOptions: FindManyOptions<IEquipment> = {
       take: query?.limit || 100,
       skip: query?.offset || 0,
       where: {},
+      relations: ['items', 'collaborators'],
     };
 
     if (query?.title) {
       findOptions.where['title'] = Like(`%${query.title}%`);
     }
 
-    const equipments = await this.equipmentRepository.findAndCount(findOptions);
+    const [equipments, total] =
+      await this.equipmentRepository.findAndCount(findOptions);
 
     return {
-      equipments: equipments[0],
-      total: equipments[1],
+      data: equipments,
+      total,
       offset: Number(query?.offset) || 0,
     };
   }
@@ -44,7 +42,7 @@ export class EquipmentService {
       equipment,
     );
     if (!affected) {
-      throw new Error('Equipment not found');
+      throw new NotFoundException('Equipment not found');
     }
     return null;
   }

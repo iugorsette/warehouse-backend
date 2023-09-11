@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { IItem } from './interfaces/item.interface';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class ItemService {
@@ -13,8 +13,29 @@ export class ItemService {
     return this.itemRepository.save(created);
   }
 
-  async findAll(): Promise<IItem[]> {
-    return this.itemRepository.find();
+  async findAll(query: IQuery): Promise<QueryResponse<IItem>> {
+    const findOptions: FindManyOptions<IItem> = {
+      take: query?.limit || 100,
+      skip: query?.offset || 0,
+      where: {},
+      relations: ['equipment'],
+    };
+
+    if (query?.property) {
+      findOptions.where['property'] = Like(`%${query.property}%`);
+    }
+
+    if (query?.value) {
+      findOptions.where['value'] = Like(`%${query.value}%`);
+    }
+
+    const [items, total] = await this.itemRepository.findAndCount(findOptions);
+
+    return {
+      data: items,
+      total,
+      offset: Number(query?.offset) || 0,
+    };
   }
 
   async update(item: IItem, id: string): Promise<void> {
