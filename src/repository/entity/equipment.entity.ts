@@ -6,7 +6,6 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToMany,
-  JoinTable,
 } from 'typeorm';
 import { Item } from './item.entity';
 import { Collaborator } from './collaborator.entity';
@@ -32,6 +31,5 @@ export class Equipment {
   items: Item[];
 
   @ManyToMany(() => Collaborator, (collaborator) => collaborator.equipments)
-  @JoinTable()
   collaborators: Collaborator[];
 }

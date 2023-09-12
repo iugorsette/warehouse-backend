@@ -19,7 +19,7 @@ export class CollaboratorService {
       take: query?.limit || 100,
       skip: query?.offset || 0,
       where: {},
-      relations: ['department'],
+      relations: ['department', 'equipments'],
     };
 
     if (query?.title) {

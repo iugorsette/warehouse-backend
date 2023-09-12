@@ -1,7 +1,5 @@
 interface QueryResponse<T> {
-  data: T[];
-  offset?: number;
-  total?: number;
+  [key: string]: number | T[];
 }
 
 interface IQuery {
