@@ -3,9 +3,10 @@ import { ItemController } from './item.controller';
 import { ItemService } from './item.service';
 import { DatabaseModule } from 'src/repository/database.module';
 import { itemsProviders } from 'src/repository/providers/items.providers';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AuthModule],
   controllers: [ItemController],
   providers: [ItemService, ...itemsProviders],
 })

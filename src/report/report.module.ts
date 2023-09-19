@@ -1,22 +1,21 @@
 import { Module } from '@nestjs/common';
-import { EquipmentController } from './equipment.controller';
-import { EquipmentService } from './equipment.service';
+import { ReportService } from './report.service';
 import { DatabaseModule } from 'src/repository/database.module';
 import { equipmentProviders } from 'src/repository/providers/equipment.providers';
 import { collaboratorProviders } from 'src/repository/providers/collaborator.providers';
-import { ReportService } from 'src/report/report.service';
 import { reportProviders } from 'src/repository/providers/report.providers';
+import { ReportController } from './report.controller';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [EquipmentController],
+  controllers: [ReportController],
   providers: [
-    EquipmentService,
     ReportService,
-    ...equipmentProviders,
-    ...collaboratorProviders,
     ...reportProviders,
+    ...collaboratorProviders,
+    ...equipmentProviders,
   ],
+  exports: [ReportService],
 })
-export class EquipmentModule {}
+export class ReportModule {}

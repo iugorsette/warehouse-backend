@@ -2,6 +2,9 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { IEquipment } from './interfaces/equipment.interface';
 import { ICollaborator } from 'src/collaborator/interfaces/collaborator.interface';
+import { ReportService } from 'src/report/report.service';
+import { MovementTypes } from 'src/report/interfaces/report';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class EquipmentService {
@@ -10,6 +13,8 @@ export class EquipmentService {
     private equipmentRepository: Repository<IEquipment>,
     @Inject('COLLABORATOR_REPOSITORY')
     private collaboratorRepository: Repository<ICollaborator>,
+    private reportService: ReportService,
+    private authService: AuthService,
   ) {}
 
   async create(equipment: IEquipment): Promise<IEquipment> {
@@ -68,16 +73,15 @@ export class EquipmentService {
     const collaborator = await this.collaboratorRepository.findOneOrFail({
       where: { id: collaboratorId },
     });
-    if (!equipment) {
-      throw new NotFoundException('Equipment not found');
-    }
-    if (!collaborator) {
-      throw new NotFoundException('Collaborator not found');
-    }
+
     if (!equipment.collaborators) {
       equipment.collaborators = [];
     }
+
     equipment.collaborators.push(collaborator);
+
+    await this.createReport(equipmentId, collaboratorId, 'Entrada');
+
     await this.equipmentRepository.save(equipment);
   }
 
@@ -85,6 +89,37 @@ export class EquipmentService {
     equipmentId: string,
     collaboratorId: string,
   ): Promise<void> {
+    const { equipment, collaborator } = await this.validateReport(
+      equipmentId,
+      collaboratorId,
+    );
+
+    if (!equipment.collaborators) {
+      equipment.collaborators = [];
+    }
+    equipment.collaborators = equipment.collaborators.filter(
+      (c) => c.id !== collaborator.id,
+    );
+
+    await this.createReport(equipmentId, collaboratorId, 'Saída');
+    await this.equipmentRepository.save(equipment);
+  }
+
+  private async createReport(
+    equipmentId: string,
+    collaboratorId: string,
+    type: MovementTypes,
+  ) {
+    const report = {
+      equipment: equipmentId,
+      collaborator: collaboratorId,
+      type,
+      changeBy: this.authService.getUser(),
+    };
+    await this.reportService.create(report);
+  }
+
+  private async validateReport(equipmentId: string, collaboratorId: string) {
     const equipment = await this.equipmentRepository.findOneOrFail({
       where: { id: equipmentId },
     });
@@ -97,12 +132,6 @@ export class EquipmentService {
     if (!collaborator) {
       throw new NotFoundException('Collaborator not found');
     }
-    if (!equipment.collaborators) {
-      equipment.collaborators = [];
-    }
-    equipment.collaborators = equipment.collaborators.filter(
-      (c) => c.id !== collaborator.id,
-    );
-    await this.equipmentRepository.save(equipment);
+    return { equipment, collaborator };
   }
 }
