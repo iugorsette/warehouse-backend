@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { EquipmentService } from './equipment.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
@@ -46,9 +54,9 @@ export class EquipmentController {
     );
   }
 
-  // @Delete()
-  // delete(@Query('id') id: string) {
-  //   this.equipmentService.delete(id);
-  //   return `This action removes a #${id} equipment`;
-  // }
+  @Delete()
+  delete(@Query('id') id: string) {
+    this.equipmentService.delete(id);
+    return `This action removes a #${id} equipment`;
+  }
 }

@@ -7,6 +7,7 @@ import {
   ManyToOne,
   ManyToMany,
   JoinTable,
+  JoinColumn,
 } from 'typeorm';
 import { Department } from './deparment.entity';
 import { Equipment } from './equipment.entity';
@@ -29,6 +30,7 @@ export class Collaborator {
   updatedAt: Date;
 
   @ManyToOne(() => Department, (department) => department.collaborators)
+  @JoinColumn({ name: 'department_id' })
   department: Department;
 
   @ManyToMany(() => Equipment, (equipment) => equipment.collaborators)
