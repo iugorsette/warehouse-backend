@@ -62,7 +62,6 @@ export class EquipmentService {
     equipmentId: string,
     collaboratorId: string,
   ): Promise<void> {
-    console.log(equipmentId);
     const equipment = await this.equipmentRepository.findOneOrFail({
       where: { id: equipmentId },
     });
