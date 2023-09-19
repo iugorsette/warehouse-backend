@@ -33,5 +33,5 @@ export class Collaborator {
 
   @ManyToMany(() => Equipment, (equipment) => equipment.collaborators)
   @JoinTable()
-  equipments: Equipment[];
+  equipments?: Equipment[];
 }

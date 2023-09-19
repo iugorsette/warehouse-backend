@@ -24,6 +24,28 @@ export class EquipmentController {
     return `This action updates a ${equipment.title} equipment`;
   }
 
+  @Post('vinculateCollaborator')
+  vinculateCollaborator(
+    @Query('equipmentId') equipmentId: string,
+    @Query('collaboratorId') collaboratorId: string,
+  ) {
+    return this.equipmentService.addCollaboratorToEquipment(
+      equipmentId,
+      collaboratorId,
+    );
+  }
+
+  @Post('removeCollaborator')
+  desvinculateCollaborator(
+    @Query('equipmentId') equipmentId: string,
+    @Query('collaboratorId') collaboratorId: string,
+  ) {
+    return this.equipmentService.removeCollaboratorFromEquipment(
+      equipmentId,
+      collaboratorId,
+    );
+  }
+
   // @Delete()
   // delete(@Query('id') id: string) {
   //   this.equipmentService.delete(id);
