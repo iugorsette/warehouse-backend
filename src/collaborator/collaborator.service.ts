@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { ICollaborator } from './interfaces/collaborator.interface';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 
@@ -10,48 +10,67 @@ export class CollaboratorService {
   ) {}
 
   async create(collaborator: ICollaborator): Promise<ICollaborator> {
-    const created = this.collaboratorRepository.create(collaborator);
-    return this.collaboratorRepository.save(created);
+    try {
+      const created = this.collaboratorRepository.create(collaborator);
+      return this.collaboratorRepository.save(created);
+    } catch (error) {
+      throw new Error('Error creating collaborator');
+    }
   }
 
   async findAll(query: IQuery): Promise<QueryResponse<ICollaborator>> {
-    const findOptions: FindManyOptions<ICollaborator> = {
-      take: query?.limit || 100,
-      skip: query?.offset || 0,
-      where: {},
-      relations: ['department', 'equipments'],
-    };
+    try {
+      const findOptions: FindManyOptions<ICollaborator> = {
+        take: query?.limit || 100,
+        skip: query?.offset || 0,
+        where: {},
+        relations: ['department', 'equipments'],
+      };
 
-    if (query?.title) {
-      findOptions.where['title'] = Like(`%${query.title}%`);
+      if (query?.name) {
+        findOptions.where['name'] = Like(`%${query.name}%`);
+      }
+      if (query?.role) {
+        findOptions.where['role'] = Like(`%${query.role}%`);
+      }
+
+      const [departments, total] =
+        await this.collaboratorRepository.findAndCount(findOptions);
+
+      return {
+        data: departments,
+        total,
+        offset: Number(query?.offset) || 0,
+      };
+    } catch (error) {
+      throw new NotFoundException('Collaborator not found');
     }
-
-    const [departments, total] =
-      await this.collaboratorRepository.findAndCount(findOptions);
-
-    return {
-      data: departments,
-      total,
-      offset: Number(query?.offset) || 0,
-    };
   }
 
   async update(collaborator: ICollaborator, id: string): Promise<void> {
-    const { affected } = await this.collaboratorRepository.update(
-      { id },
-      collaborator,
-    );
-    if (!affected) {
+    try {
+      const { affected } = await this.collaboratorRepository.update(
+        { id },
+        collaborator,
+      );
+      if (!affected) {
+        throw new Error('Collaborator not found');
+      }
+      return null;
+    } catch (error) {
       throw new Error('Collaborator not found');
     }
-    return null;
   }
 
   async delete(id: string): Promise<void> {
-    const { affected } = await this.collaboratorRepository.delete({ id });
-    if (!affected) {
+    try {
+      const { affected } = await this.collaboratorRepository.delete({ id });
+      if (!affected) {
+        throw new Error('Collaborator not found');
+      }
+      return null;
+    } catch (error) {
       throw new Error('Collaborator not found');
     }
-    return null;
   }
 }

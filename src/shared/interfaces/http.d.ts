@@ -10,4 +10,5 @@ interface IQuery {
   title?: string;
   name?: string;
   value?: string;
+  role?: string;
 }

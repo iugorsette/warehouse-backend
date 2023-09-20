@@ -10,30 +10,37 @@ export class ReportService {
   ) {}
 
   async create(report: IReport): Promise<IReport> {
-    const created = this.reportRepository.create(report);
-
-    return this.reportRepository.save(created);
+    try {
+      const created = this.reportRepository.create(report);
+      return this.reportRepository.save(created);
+    } catch (error) {
+      throw new Error('Error creating report');
+    }
   }
 
   async findAll(query: any): Promise<QueryResponse<IReport>> {
-    const findOptions: FindManyOptions<IReport> = {
-      take: query?.limit || 100,
-      skip: query?.offset || 0,
-      where: {},
-      relations: ['equipment', 'collaborator', 'changeBy'],
-    };
+    try {
+      const findOptions: FindManyOptions<IReport> = {
+        take: query?.limit || 100,
+        skip: query?.offset || 0,
+        where: {},
+        relations: ['equipment', 'collaborator', 'changeBy'],
+      };
 
-    if (query?.type) {
-      findOptions.where['title'] = Like(`%${query.type}%`);
+      if (query?.type) {
+        findOptions.where['title'] = Like(`%${query.type}%`);
+      }
+
+      const [reports, total] =
+        await this.reportRepository.findAndCount(findOptions);
+
+      return {
+        data: reports,
+        total,
+        offset: Number(query?.offset) || 0,
+      };
+    } catch (error) {
+      throw new Error('Report not found');
     }
-
-    const [reports, total] =
-      await this.reportRepository.findAndCount(findOptions);
-
-    return {
-      data: reports,
-      total,
-      offset: Number(query?.offset) || 0,
-    };
   }
 }

@@ -18,30 +18,38 @@ export class EquipmentService {
   ) {}
 
   async create(equipment: IEquipment): Promise<IEquipment> {
-    const created = this.equipmentRepository.create(equipment);
-    return this.equipmentRepository.save(created);
+    try {
+      const created = this.equipmentRepository.create(equipment);
+      return this.equipmentRepository.save(created);
+    } catch (error) {
+      throw new Error('Error creating equipment');
+    }
   }
 
   async findAll(query?: IQuery): Promise<QueryResponse<IEquipment>> {
-    const findOptions: FindManyOptions<IEquipment> = {
-      take: query?.limit || 100,
-      skip: query?.offset || 0,
-      where: {},
-      relations: ['items', 'collaborators'],
-    };
+    try {
+      const findOptions: FindManyOptions<IEquipment> = {
+        take: query?.limit || 100,
+        skip: query?.offset || 0,
+        where: {},
+        relations: ['items', 'collaborators'],
+      };
 
-    if (query?.title) {
-      findOptions.where['title'] = Like(`%${query.title}%`);
+      if (query?.title) {
+        findOptions.where['title'] = Like(`%${query.title}%`);
+      }
+
+      const [equipments, total] =
+        await this.equipmentRepository.findAndCount(findOptions);
+
+      return {
+        data: equipments,
+        total,
+        offset: Number(query?.offset) || 0,
+      };
+    } catch (error) {
+      throw new NotFoundException('Equipment not found');
     }
-
-    const [equipments, total] =
-      await this.equipmentRepository.findAndCount(findOptions);
-
-    return {
-      data: equipments,
-      total,
-      offset: Number(query?.offset) || 0,
-    };
   }
 
   async update(equipment: IEquipment, id: string): Promise<void> {
