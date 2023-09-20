@@ -45,64 +45,71 @@ export class EquipmentService {
   }
 
   async update(equipment: IEquipment, id: string): Promise<void> {
-    const { affected } = await this.equipmentRepository.update(
-      { id },
-      equipment,
-    );
-    if (!affected) {
+    try {
+      const { affected } = await this.equipmentRepository.update(
+        { id },
+        equipment,
+      );
+      if (!affected) {
+        throw new NotFoundException('Equipment not found');
+      }
+      return null;
+    } catch (error) {
       throw new NotFoundException('Equipment not found');
     }
-    return null;
   }
 
   async delete(id: string): Promise<void> {
-    const { affected } = await this.equipmentRepository.delete({ id });
-    if (!affected) {
-      throw new Error('Equipment not found');
+    try {
+      const { affected } = await this.equipmentRepository.delete({ id });
+      if (!affected) {
+        throw new Error('Equipment not found');
+      }
+      return null;
+    } catch (error) {
+      throw new NotFoundException('Equipment not found');
     }
-    return null;
   }
 
   async addCollaboratorToEquipment(
     equipmentId: string,
     collaboratorId: string,
   ): Promise<void> {
-    const equipment = await this.equipmentRepository.findOneOrFail({
-      where: { id: equipmentId },
-    });
-    const collaborator = await this.collaboratorRepository.findOneOrFail({
-      where: { id: collaboratorId },
-    });
+    try {
+      const { equipment, collaborator } = await this.validateReport(
+        equipmentId,
+        collaboratorId,
+      );
 
-    if (!equipment.collaborators) {
-      equipment.collaborators = [];
+      equipment.collaborators.push(collaborator);
+
+      await this.createReport(equipmentId, collaboratorId, 'Entrada');
+
+      await this.equipmentRepository.save(equipment);
+    } catch (error) {
+      throw new NotFoundException('Equipment or Collaborator not found');
     }
-
-    equipment.collaborators.push(collaborator);
-
-    await this.createReport(equipmentId, collaboratorId, 'Entrada');
-
-    await this.equipmentRepository.save(equipment);
   }
 
   async removeCollaboratorFromEquipment(
     equipmentId: string,
     collaboratorId: string,
   ): Promise<void> {
-    const { equipment, collaborator } = await this.validateReport(
-      equipmentId,
-      collaboratorId,
-    );
+    try {
+      const { equipment, collaborator } = await this.validateReport(
+        equipmentId,
+        collaboratorId,
+      );
 
-    if (!equipment.collaborators) {
-      equipment.collaborators = [];
+      equipment.collaborators = equipment.collaborators.filter(
+        (c) => c.id !== collaborator.id,
+      );
+
+      await this.createReport(equipmentId, collaboratorId, 'Saída');
+      await this.equipmentRepository.save(equipment);
+    } catch (error) {
+      throw new NotFoundException('Equipment or Collaborator not found');
     }
-    equipment.collaborators = equipment.collaborators.filter(
-      (c) => c.id !== collaborator.id,
-    );
-
-    await this.createReport(equipmentId, collaboratorId, 'Saída');
-    await this.equipmentRepository.save(equipment);
   }
 
   private async createReport(
@@ -120,18 +127,21 @@ export class EquipmentService {
   }
 
   private async validateReport(equipmentId: string, collaboratorId: string) {
+    if (!equipmentId || !collaboratorId) {
+      throw new NotFoundException('Equipment or Collaborator not found');
+    }
     const equipment = await this.equipmentRepository.findOneOrFail({
       where: { id: equipmentId },
+      relations: ['collaborators'],
     });
     const collaborator = await this.collaboratorRepository.findOneOrFail({
       where: { id: collaboratorId },
     });
-    if (!equipment) {
-      throw new NotFoundException('Equipment not found');
+
+    if (!equipment || !collaborator) {
+      throw new NotFoundException('Equipment or Collaborator not found');
     }
-    if (!collaborator) {
-      throw new NotFoundException('Collaborator not found');
-    }
+
     return { equipment, collaborator };
   }
 }
