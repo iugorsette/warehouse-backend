@@ -14,7 +14,7 @@ export class CollaboratorService {
       const created = this.collaboratorRepository.create(collaborator);
       return this.collaboratorRepository.save(created);
     } catch (error) {
-      throw new Error('Error creating collaborator');
+      throw new NotFoundException('Error creating collaborator');
     }
   }
 
@@ -54,23 +54,25 @@ export class CollaboratorService {
         collaborator,
       );
       if (!affected) {
-        throw new Error('Collaborator not found');
+        throw new NotFoundException('Collaborator not found');
       }
       return null;
     } catch (error) {
-      throw new Error('Collaborator not found');
+      throw new NotFoundException('Collaborator not found');
     }
   }
 
   async delete(id: string): Promise<void> {
     try {
-      const { affected } = await this.collaboratorRepository.delete({ id });
-      if (!affected) {
-        throw new Error('Collaborator not found');
+      const { affected } = await this.collaboratorRepository.delete({
+        id,
+      });
+      if (affected === 0) {
+        throw new NotFoundException('Collaborator not found');
       }
       return null;
     } catch (error) {
-      throw new Error('Collaborator not found');
+      throw new NotFoundException('Collaborator not found');
     }
   }
 }

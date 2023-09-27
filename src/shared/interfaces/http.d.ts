@@ -11,4 +11,5 @@ interface IQuery {
   name?: string;
   value?: string;
   role?: string;
+  collaboratorId?: string;
 }

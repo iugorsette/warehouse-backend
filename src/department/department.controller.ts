@@ -18,6 +18,9 @@ export class DepartmentController {
   constructor(private readonly departmentService: DepartmentService) {}
   @Get()
   findAll(@Query() query: IQuery): Promise<QueryResponse<IDepartment>> {
+    if (Number(query?.offset) > 0) {
+      query.offset = Number(query.offset) * Number(query.limit);
+    }
     return this.departmentService.findAll(query);
   }
 
@@ -28,13 +31,11 @@ export class DepartmentController {
 
   @Put()
   update(@Body() department: IDepartment, @Query('id') id: string) {
-    this.departmentService.update(department, id);
-    return `This action updates a ${department.name} department`;
+    return this.departmentService.update(department, id);
   }
 
   @Delete()
   delete(@Query('id') id: string) {
-    this.departmentService.delete(id);
-    return `This action removes a #${id} department`;
+    return this.departmentService.delete(id);
   }
 }

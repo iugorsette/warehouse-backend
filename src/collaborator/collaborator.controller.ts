@@ -18,6 +18,9 @@ export class CollaboratorController {
   constructor(private readonly collaboratorService: CollaboratorService) {}
   @Get()
   findAll(@Query() query: IQuery): Promise<QueryResponse<ICollaborator>> {
+    if (Number(query?.offset) > 0) {
+      query.offset = Number(query.offset) * Number(query.limit);
+    }
     return this.collaboratorService.findAll(query);
   }
 
@@ -28,13 +31,11 @@ export class CollaboratorController {
 
   @Put()
   update(@Body() collaborator: ICollaborator, @Query('id') id: string) {
-    this.collaboratorService.update(collaborator, id);
-    return `This action updates a ${collaborator.name} collaborator`;
+    return this.collaboratorService.update(collaborator, id);
   }
 
   @Delete()
   delete(@Query('id') id: string) {
-    this.collaboratorService.delete(id);
-    return `This action removes a #${id} collaborator`;
+    return this.collaboratorService.delete(id);
   }
 }

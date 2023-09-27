@@ -18,6 +18,9 @@ export class ItemController {
   constructor(private readonly itemService: ItemService) {}
   @Get()
   findAll(@Query() query: IQuery): Promise<QueryResponse<IItem>> {
+    if (Number(query?.offset) > 0) {
+      query.offset = Number(query.offset) * Number(query.limit);
+    }
     return this.itemService.findAll(query);
   }
 
@@ -28,13 +31,11 @@ export class ItemController {
 
   @Put()
   update(@Body() item: IItem, @Query('id') id: string) {
-    this.itemService.update(item, id);
-    return `This action updates a ${item.property} item`;
+    return this.itemService.update(item, id);
   }
 
   @Delete()
   delete(@Query('id') id: string) {
-    this.itemService.delete(id);
-    return `This action removes a #${id} item`;
+    return this.itemService.delete(id);
   }
 }

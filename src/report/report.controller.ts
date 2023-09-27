@@ -10,6 +10,9 @@ export class ReportController {
   constructor(private readonly reportService: ReportService) {}
   @Get()
   findAll(@Query() query: IQuery): Promise<QueryResponse<IReport>> {
+    if (Number(query?.offset) > 0) {
+      query.offset = Number(query.offset) * Number(query.limit);
+    }
     return this.reportService.findAll(query);
   }
 }

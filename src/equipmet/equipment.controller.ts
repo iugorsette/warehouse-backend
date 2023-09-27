@@ -18,6 +18,9 @@ export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) {}
   @Get()
   findAll(@Query() query: IQuery): Promise<QueryResponse<IEquipment>> {
+    if (Number(query?.offset) > 0) {
+      query.offset = Number(query.offset) * Number(query.limit);
+    }
     return this.equipmentService.findAll(query);
   }
 
@@ -28,8 +31,7 @@ export class EquipmentController {
 
   @Put()
   update(@Body() equipment: IEquipment, @Query('id') id: string) {
-    this.equipmentService.update(equipment, id);
-    return `This action updates a ${equipment.title} equipment`;
+    return this.equipmentService.update(equipment, id);
   }
 
   @Post('vinculateCollaborator')
@@ -56,7 +58,6 @@ export class EquipmentController {
 
   @Delete()
   delete(@Query('id') id: string) {
-    this.equipmentService.delete(id);
-    return `This action removes a #${id} equipment`;
+    return this.equipmentService.delete(id);
   }
 }

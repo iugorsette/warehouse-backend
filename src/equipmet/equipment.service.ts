@@ -1,5 +1,5 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { FindManyOptions, Like, Repository } from 'typeorm';
+import { Equal, FindManyOptions, Like, Repository } from 'typeorm';
 import { IEquipment } from './interfaces/equipment.interface';
 import { ICollaborator } from 'src/collaborator/interfaces/collaborator.interface';
 import { ReportService } from 'src/report/report.service';
@@ -22,7 +22,7 @@ export class EquipmentService {
       const created = this.equipmentRepository.create(equipment);
       return this.equipmentRepository.save(created);
     } catch (error) {
-      throw new Error('Error creating equipment');
+      throw new NotFoundException('Error creating equipment');
     }
   }
 
@@ -38,9 +38,19 @@ export class EquipmentService {
       if (query?.title) {
         findOptions.where['title'] = Like(`%${query.title}%`);
       }
+      if (query?.collaboratorId) {
+        findOptions.join = {
+          alias: 'equipment',
+          leftJoinAndSelect: {
+            collaborators: 'equipment.collaborators',
+          },
+        };
+      }
 
       const [equipments, total] =
         await this.equipmentRepository.findAndCount(findOptions);
+
+      console.log('->', equipments);
 
       return {
         data: equipments,
@@ -48,7 +58,7 @@ export class EquipmentService {
         offset: Number(query?.offset) || 0,
       };
     } catch (error) {
-      throw new NotFoundException('Equipment not found');
+      throw new NotFoundException(error.message);
     }
   }
 
@@ -69,13 +79,19 @@ export class EquipmentService {
 
   async delete(id: string): Promise<void> {
     try {
+      const equipment = await this.equipmentRepository.findOneOrFail({
+        where: { id },
+      });
+      if (!equipment) {
+        throw new NotFoundException('Equipment not found');
+      }
       const { affected } = await this.equipmentRepository.delete({ id });
       if (!affected) {
-        throw new Error('Equipment not found');
+        throw new NotFoundException('Equipment may not be deleted');
       }
       return null;
     } catch (error) {
-      throw new NotFoundException('Equipment not found');
+      throw new NotFoundException(error.message);
     }
   }
 
