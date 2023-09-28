@@ -1,5 +1,5 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { Equal, FindManyOptions, Like, Repository } from 'typeorm';
+import { FindManyOptions, IsNull, Like, Repository } from 'typeorm';
 import { IEquipment } from './interfaces/equipment.interface';
 import { ICollaborator } from 'src/collaborator/interfaces/collaborator.interface';
 import { ReportService } from 'src/report/report.service';
@@ -38,19 +38,28 @@ export class EquipmentService {
       if (query?.title) {
         findOptions.where['title'] = Like(`%${query.title}%`);
       }
+
       if (query?.collaboratorId) {
-        findOptions.join = {
-          alias: 'equipment',
-          leftJoinAndSelect: {
-            collaborators: 'equipment.collaborators',
+        findOptions.relationLoadStrategy = 'join';
+
+        findOptions.where = {
+          collaborators: {
+            id: query.collaboratorId,
           },
         };
       }
 
+      if (query?.showStock === 'true') {
+        findOptions.relationLoadStrategy = 'join';
+
+        findOptions.where = {
+          collaborators: {
+            id: IsNull(),
+          },
+        };
+      }
       const [equipments, total] =
         await this.equipmentRepository.findAndCount(findOptions);
-
-      console.log('->', equipments);
 
       return {
         data: equipments,

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { IReport } from './interfaces/report';
 
@@ -14,7 +14,7 @@ export class ReportService {
       const created = this.reportRepository.create(report);
       return this.reportRepository.save(created);
     } catch (error) {
-      throw new Error('Error creating report');
+      throw new NotFoundException('Error creating report');
     }
   }
 
@@ -40,7 +40,7 @@ export class ReportService {
         offset: Number(query?.offset) || 0,
       };
     } catch (error) {
-      throw new Error('Report not found');
+      throw new NotFoundException('Report not found');
     }
   }
 }

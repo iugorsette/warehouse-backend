@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { IItem } from './interfaces/item.interface';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 
@@ -13,7 +13,7 @@ export class ItemService {
       const created = this.itemRepository.create(item);
       return this.itemRepository.save(created);
     } catch (error) {
-      throw new Error('Error creating item');
+      throw new NotFoundException('Error creating item');
     }
   }
 
@@ -43,7 +43,7 @@ export class ItemService {
         offset: Number(query?.offset) || 0,
       };
     } catch (error) {
-      throw new Error('Item not found');
+      throw new NotFoundException('Item not found');
     }
   }
 
@@ -51,11 +51,11 @@ export class ItemService {
     try {
       const { affected } = await this.itemRepository.update({ id }, item);
       if (!affected) {
-        throw new Error('Item not found');
+        throw new NotFoundException('Item not found');
       }
       return null;
     } catch (error) {
-      throw new Error('Item not found');
+      throw new NotFoundException('Item not found');
     }
   }
 
@@ -63,11 +63,11 @@ export class ItemService {
     try {
       const { affected } = await this.itemRepository.delete({ id });
       if (!affected) {
-        throw new Error('Item not found');
+        throw new NotFoundException('Item not found');
       }
       return null;
     } catch (error) {
-      throw new Error('Item not found');
+      throw new NotFoundException('Item not found');
     }
   }
 }

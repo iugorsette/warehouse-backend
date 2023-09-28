@@ -14,7 +14,7 @@ export class DepartmentService {
       const created = this.departmentRepository.create(department);
       return this.departmentRepository.save(created);
     } catch (error) {
-      throw new Error('Error creating department');
+      throw new NotFoundException('Error creating department');
     }
   }
 
@@ -51,11 +51,11 @@ export class DepartmentService {
         department,
       );
       if (!affected) {
-        throw new Error('department not found');
+        throw new NotFoundException('department not found');
       }
       return null;
     } catch (error) {
-      throw new Error('department not found');
+      throw new NotFoundException('department not found');
     }
   }
 
@@ -63,7 +63,7 @@ export class DepartmentService {
     try {
       const { affected } = await this.departmentRepository.delete({ id });
       if (!affected) {
-        throw new Error('department not found');
+        throw new NotFoundException('department not found');
       }
       return null;
     } catch (error) {
