@@ -9,6 +9,7 @@ import {
 import { User } from './user.entity';
 import { Equipment } from './equipment.entity';
 import { Collaborator } from './collaborator.entity';
+import { MovementTypes } from 'src/report/interfaces/report';
 
 @Entity()
 export class Report {
@@ -16,7 +17,7 @@ export class Report {
   id: string;
 
   @Column()
-  type: 'Entrada' | 'Saída' | 'Transferência';
+  type: MovementTypes;
 
   @ManyToOne(() => Equipment)
   equipment: Equipment;

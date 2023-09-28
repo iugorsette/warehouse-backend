@@ -25,6 +25,10 @@ export class DepartmentService {
         skip: query?.offset || 0,
         where: {},
         relations: ['collaborators'],
+        order: {
+          updatedAt: 'DESC',
+          createdAt: 'DESC',
+        },
       };
 
       if (query?.name) {

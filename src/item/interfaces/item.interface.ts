@@ -4,6 +4,6 @@ export interface IItem {
   value: string | number;
   equipmentId: string;
   description: string;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }

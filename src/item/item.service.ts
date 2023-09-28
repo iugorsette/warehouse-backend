@@ -24,6 +24,10 @@ export class ItemService {
         skip: query?.offset || 0,
         where: {},
         relations: ['equipment'],
+        order: {
+          updatedAt: 'DESC',
+          createdAt: 'DESC',
+        },
       };
 
       if (query?.property) {

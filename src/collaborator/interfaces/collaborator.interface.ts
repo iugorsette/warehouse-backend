@@ -4,8 +4,8 @@ import { IEquipment } from 'src/equipmet/interfaces/equipment.interface';
 export interface ICollaborator {
   id: string;
   name: string;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
   equipments?: IEquipment[];
   department?: IDepartment;
 }

@@ -33,6 +33,10 @@ export class EquipmentService {
         skip: query?.offset || 0,
         where: {},
         relations: ['items', 'collaborators'],
+        order: {
+          updatedAt: 'DESC',
+          createdAt: 'DESC',
+        },
       };
 
       if (query?.title) {
@@ -156,6 +160,7 @@ export class EquipmentService {
       type,
       changeBy: this.authService.getUser(),
     };
+    console.log(report);
     await this.reportService.create(report);
   }
 

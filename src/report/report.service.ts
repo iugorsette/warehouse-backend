@@ -25,6 +25,10 @@ export class ReportService {
         skip: query?.offset || 0,
         where: {},
         relations: ['equipment', 'collaborator', 'changeBy'],
+        order: {
+          updatedAt: 'DESC',
+          createdAt: 'DESC',
+        },
       };
 
       if (query?.type) {

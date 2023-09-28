@@ -5,6 +5,8 @@ export interface IReport {
   equipment: string;
   collaborator: string;
   changeBy: IUser;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type MovementTypes = 'Entrada' | 'Saída' | 'Transferência';
