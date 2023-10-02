@@ -10,7 +10,7 @@ import {
 import { EquipmentService } from './equipment.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
-import { IEquipment } from './interfaces/equipment.interface';
+import { IEquipment, Vinculate } from './interfaces/equipment.interface';
 
 @UseGuards(AuthGuard)
 @Controller('equipments')
@@ -35,25 +35,13 @@ export class EquipmentController {
   }
 
   @Post('vinculateCollaborator')
-  vinculateCollaborator(
-    @Query('equipmentId') equipmentId: string,
-    @Query('collaboratorId') collaboratorId: string,
-  ) {
-    return this.equipmentService.addCollaboratorToEquipment(
-      equipmentId,
-      collaboratorId,
-    );
+  vinculateCollaborator(@Body() vinculate: Vinculate) {
+    return this.equipmentService.addCollaboratorToEquipment(vinculate);
   }
 
   @Post('removeCollaborator')
-  desvinculateCollaborator(
-    @Query('equipmentId') equipmentId: string,
-    @Query('collaboratorId') collaboratorId: string,
-  ) {
-    return this.equipmentService.removeCollaboratorFromEquipment(
-      equipmentId,
-      collaboratorId,
-    );
+  desvinculateCollaborator(@Body() vinculate: Vinculate) {
+    return this.equipmentService.removeCollaboratorFromEquipment(vinculate);
   }
 
   @Delete()

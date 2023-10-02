@@ -1,6 +1,6 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { FindManyOptions, IsNull, Like, Repository } from 'typeorm';
-import { IEquipment } from './interfaces/equipment.interface';
+import { IEquipment, Vinculate } from './interfaces/equipment.interface';
 import { ICollaborator } from 'src/collaborator/interfaces/collaborator.interface';
 import { ReportService } from 'src/report/report.service';
 import { MovementTypes } from 'src/report/interfaces/report';
@@ -108,10 +108,10 @@ export class EquipmentService {
     }
   }
 
-  async addCollaboratorToEquipment(
-    equipmentId: string,
-    collaboratorId: string,
-  ): Promise<void> {
+  async addCollaboratorToEquipment({
+    equipmentId,
+    collaboratorId,
+  }: Vinculate): Promise<void> {
     try {
       const { equipment, collaborator } = await this.validateReport(
         equipmentId,
@@ -128,10 +128,10 @@ export class EquipmentService {
     }
   }
 
-  async removeCollaboratorFromEquipment(
-    equipmentId: string,
-    collaboratorId: string,
-  ): Promise<void> {
+  async removeCollaboratorFromEquipment({
+    equipmentId,
+    collaboratorId,
+  }: Vinculate): Promise<void> {
     try {
       const { equipment, collaborator } = await this.validateReport(
         equipmentId,
@@ -160,7 +160,6 @@ export class EquipmentService {
       type,
       changeBy: this.authService.getUser(),
     };
-    console.log(report);
     await this.reportService.create(report);
   }
 

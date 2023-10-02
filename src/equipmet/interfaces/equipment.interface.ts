@@ -8,3 +8,8 @@ export interface IEquipment {
   updatedAt: Date;
   collaborators?: ICollaborator[];
 }
+
+export interface Vinculate {
+  equipmentId: string;
+  collaboratorId: string;
+}
