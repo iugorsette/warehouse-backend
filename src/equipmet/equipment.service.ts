@@ -5,6 +5,7 @@ import { ICollaborator } from 'src/collaborator/interfaces/collaborator.interfac
 import { ReportService } from 'src/report/report.service';
 import { MovementTypes } from 'src/report/interfaces/report';
 import { AuthService } from 'src/auth/auth.service';
+import { ItemService } from 'src/item/item.service';
 
 @Injectable()
 export class EquipmentService {
@@ -15,14 +16,31 @@ export class EquipmentService {
     private collaboratorRepository: Repository<ICollaborator>,
     private reportService: ReportService,
     private authService: AuthService,
+    private readonly itemService: ItemService,
   ) {}
 
   async create(equipment: IEquipment): Promise<IEquipment> {
     try {
       const created = this.equipmentRepository.create(equipment);
-      return this.equipmentRepository.save(created);
+      const { id } = await this.equipmentRepository.save(created);
+
+      if (equipment.items.length > 0) {
+        equipment.items.forEach((item) => {
+          this.itemService.create({ ...item, equipment: id });
+        });
+      }
+      if (equipment.collaborators.length > 0) {
+        equipment.collaborators.forEach((collaborator) => {
+          this.addCollaboratorToEquipment({
+            equipmentId: id,
+            collaboratorId: collaborator.id,
+          });
+        });
+      }
+
+      return created;
     } catch (error) {
-      throw new NotFoundException('Error creating equipment');
+      throw new NotFoundException('Error creating equipment', error.message);
     }
   }
 
@@ -75,18 +93,64 @@ export class EquipmentService {
     }
   }
 
-  async update(equipment: IEquipment, id: string): Promise<void> {
+  async findOne(id: string): Promise<IEquipment> {
     try {
+      const equipment = await this.equipmentRepository.findOneOrFail({
+        where: { id },
+        relations: ['items', 'collaborators'],
+      });
+      if (!equipment) {
+        throw new NotFoundException('Equipment not found');
+      }
+      return equipment;
+    } catch (error) {
+      throw new NotFoundException('Equipment not found');
+    }
+  }
+
+  async update(equipment: IEquipment, id: string): Promise<any> {
+    try {
+      const { items } = await this.equipmentRepository.findOneOrFail({
+        where: { id },
+        relations: ['items', 'collaborators'],
+      });
+
+      console.log('itens existentes', items);
+
+      if (items.length > 0) {
+        items.filter((item) => {
+          if (!equipment.items.find((i) => i.id === item.id)) {
+            this.itemService.delete(item.id);
+          }
+        });
+      }
+
+      if (equipment.items.length > 0) {
+        equipment.items.forEach((item) => {
+          if (item.id) {
+            console.log(item);
+            this.itemService.update(item, item.id);
+          } else {
+            console.log(item);
+            this.itemService.create({ ...item, equipment: id });
+          }
+        });
+      }
+
+      delete equipment.items;
+      console.log(equipment, id);
+
       const { affected } = await this.equipmentRepository.update(
         { id },
         equipment,
       );
+      console.log(affected);
       if (!affected) {
         throw new NotFoundException('Equipment not found');
       }
       return null;
     } catch (error) {
-      throw new NotFoundException('Equipment not found');
+      throw new NotFoundException('Equipment not found', error.message);
     }
   }
 

@@ -7,6 +7,8 @@ import { collaboratorProviders } from 'src/repository/providers/collaborator.pro
 import { ReportService } from 'src/report/report.service';
 import { reportProviders } from 'src/repository/providers/report.providers';
 import { AuthModule } from 'src/auth/auth.module';
+import { itemsProviders } from 'src/repository/providers/items.providers';
+import { ItemService } from 'src/item/item.service';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
@@ -14,9 +16,11 @@ import { AuthModule } from 'src/auth/auth.module';
   providers: [
     EquipmentService,
     ReportService,
+    ItemService,
     ...equipmentProviders,
     ...collaboratorProviders,
     ...reportProviders,
+    ...itemsProviders,
   ],
 })
 export class EquipmentModule {}

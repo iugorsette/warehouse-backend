@@ -17,6 +17,17 @@ export class ItemService {
     }
   }
 
+  async findOne(id: string): Promise<IItem> {
+    try {
+      return this.itemRepository.findOneOrFail({
+        where: { id },
+        relations: ['equipment'],
+      });
+    } catch (error) {
+      throw new NotFoundException('Item not found');
+    }
+  }
+
   async findAll(query: IQuery): Promise<QueryResponse<IItem>> {
     try {
       const findOptions: FindManyOptions<IItem> = {
