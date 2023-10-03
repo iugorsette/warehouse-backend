@@ -78,4 +78,44 @@ export class DepartmentService {
       throw new NotFoundException('department not found');
     }
   }
+
+  async addCollaboratorToDepartment({
+    departmentId,
+    collaboratorId,
+  }): Promise<IDepartment> {
+    try {
+      const department = await this.departmentRepository.findOneOrFail({
+        where: { id: departmentId },
+        relations: ['collaborators'],
+      });
+      if (!department) {
+        throw new NotFoundException('department not found');
+      }
+      department.collaborators.push({ id: collaboratorId } as any);
+      return this.departmentRepository.save(department);
+    } catch (error) {
+      throw new NotFoundException('department not found');
+    }
+  }
+
+  async removeCollaboratorFromDepartment({
+    departmentId,
+    collaboratorId,
+  }): Promise<IDepartment> {
+    try {
+      const department = await this.departmentRepository.findOneOrFail({
+        where: { id: departmentId },
+        relations: ['collaborators'],
+      });
+      if (!department) {
+        throw new NotFoundException('department not found');
+      }
+      department.collaborators = department.collaborators.filter(
+        (collaborator) => collaborator.id !== collaboratorId,
+      );
+      return this.departmentRepository.save(department);
+    } catch (error) {
+      throw new NotFoundException('department not found');
+    }
+  }
 }

@@ -4,10 +4,17 @@ import { collaboratorProviders } from 'src/repository/providers/collaborator.pro
 import { CollaboratorController } from './collaborator.controller';
 import { CollaboratorService } from './collaborator.service';
 import { AuthModule } from 'src/auth/auth.module';
+import { DepartmentService } from 'src/department/department.service';
+import { departmentProviders } from 'src/repository/providers/department.providers';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
   controllers: [CollaboratorController],
-  providers: [CollaboratorService, ...collaboratorProviders],
+  providers: [
+    CollaboratorService,
+    DepartmentService,
+    ...collaboratorProviders,
+    ...departmentProviders,
+  ],
 })
 export class CollaboratorModule {}

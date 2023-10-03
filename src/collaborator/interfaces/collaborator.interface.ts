@@ -8,4 +8,5 @@ export interface ICollaborator {
   updatedAt: Date;
   equipments?: IEquipment[];
   department?: IDepartment;
+  departmentId?: string;
 }

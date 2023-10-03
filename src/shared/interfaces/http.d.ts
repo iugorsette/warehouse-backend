@@ -14,4 +14,5 @@ interface IQuery {
   role?: string;
   collaboratorId?: string;
   showStock: string;
+  department?: string;
 }

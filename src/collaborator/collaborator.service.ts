@@ -1,18 +1,31 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { ICollaborator } from './interfaces/collaborator.interface';
 import { FindManyOptions, Like, Repository } from 'typeorm';
+import { DepartmentService } from 'src/department/department.service';
 
 @Injectable()
 export class CollaboratorService {
   constructor(
     @Inject('COLLABORATOR_REPOSITORY')
     private collaboratorRepository: Repository<ICollaborator>,
+    private departmentService: DepartmentService,
   ) {}
 
   async create(collaborator: ICollaborator): Promise<ICollaborator> {
     try {
+      const departmentId = collaborator.departmentId;
+      delete collaborator.department;
       const created = this.collaboratorRepository.create(collaborator);
-      return this.collaboratorRepository.save(created);
+      const { id } = await this.collaboratorRepository.save(created);
+
+      const vinculate = {
+        departmentId,
+        collaboratorId: id,
+      };
+      if (departmentId) {
+        this.departmentService.addCollaboratorToDepartment(vinculate);
+      }
+      return created;
     } catch (error) {
       throw new NotFoundException('Error creating collaborator');
     }
@@ -31,6 +44,9 @@ export class CollaboratorService {
         },
       };
 
+      if (query?.department) {
+        findOptions.where['department'] = Like(`%${query.department}%`);
+      }
       if (query?.id) {
         findOptions.where['id'] = Like(`%${query.id}%`);
       }
@@ -56,6 +72,32 @@ export class CollaboratorService {
 
   async update(collaborator: ICollaborator, id: string): Promise<void> {
     try {
+      const { department } = await this.collaboratorRepository.findOneOrFail({
+        where: { id },
+        relations: ['department'],
+      });
+
+      if (department?.id !== collaborator.departmentId && department?.id) {
+        const desvinculate = {
+          departmentId: department.id,
+          collaboratorId: id,
+        };
+
+        this.departmentService.removeCollaboratorFromDepartment(desvinculate);
+      }
+      if (
+        collaborator.departmentId &&
+        department?.id !== collaborator.departmentId
+      ) {
+        const vinculate = {
+          departmentId: collaborator.departmentId,
+          collaboratorId: id,
+        };
+        this.departmentService.addCollaboratorToDepartment(vinculate);
+      }
+
+      delete collaborator.departmentId;
+
       const { affected } = await this.collaboratorRepository.update(
         { id },
         collaborator,
