@@ -35,6 +35,10 @@ export class ReportService {
         findOptions.where['title'] = Like(`%${query.type}%`);
       }
 
+      if (query?.id) {
+        findOptions.where['id'] = Like(`%${query.id}%`);
+      }
+
       const [reports, total] =
         await this.reportRepository.findAndCount(findOptions);
 

@@ -31,6 +31,9 @@ export class CollaboratorService {
         },
       };
 
+      if (query?.id) {
+        findOptions.where['id'] = Like(`%${query.id}%`);
+      }
       if (query?.name) {
         findOptions.where['name'] = Like(`%${query.name}%`);
       }

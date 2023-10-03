@@ -45,6 +45,10 @@ export class ItemService {
         findOptions.where['property'] = Like(`%${query.property}%`);
       }
 
+      if (query?.id) {
+        findOptions.where['id'] = Like(`%${query.id}%`);
+      }
+
       if (query?.value) {
         findOptions.where['value'] = Like(`%${query.value}%`);
       }

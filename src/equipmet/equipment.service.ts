@@ -60,7 +60,9 @@ export class EquipmentService {
       if (query?.title) {
         findOptions.where['title'] = Like(`%${query.title}%`);
       }
-
+      if (query?.id) {
+        findOptions.where['id'] = Like(`%${query.id}%`);
+      }
       if (query?.collaboratorId) {
         findOptions.relationLoadStrategy = 'join';
 
@@ -115,8 +117,6 @@ export class EquipmentService {
         relations: ['items', 'collaborators'],
       });
 
-      console.log('itens existentes', items);
-
       if (items.length > 0) {
         items.filter((item) => {
           if (!equipment.items.find((i) => i.id === item.id)) {
@@ -128,23 +128,19 @@ export class EquipmentService {
       if (equipment.items.length > 0) {
         equipment.items.forEach((item) => {
           if (item.id) {
-            console.log(item);
             this.itemService.update(item, item.id);
           } else {
-            console.log(item);
             this.itemService.create({ ...item, equipment: id });
           }
         });
       }
 
       delete equipment.items;
-      console.log(equipment, id);
 
       const { affected } = await this.equipmentRepository.update(
         { id },
         equipment,
       );
-      console.log(affected);
       if (!affected) {
         throw new NotFoundException('Equipment not found');
       }

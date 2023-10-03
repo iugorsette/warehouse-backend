@@ -3,6 +3,7 @@ interface QueryResponse<T> {
 }
 
 interface IQuery {
+  id?: string;
   offset?: number;
   total?: number;
   limit?: number;

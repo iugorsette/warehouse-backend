@@ -35,6 +35,10 @@ export class DepartmentService {
         findOptions.where['name'] = Like(`%${query.name}%`);
       }
 
+      if (query?.id) {
+        findOptions.where['id'] = Like(`%${query.id}%`);
+      }
+
       const [departments, total] =
         await this.departmentRepository.findAndCount(findOptions);
 
