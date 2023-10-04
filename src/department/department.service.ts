@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { IDepartment } from './interfaces/department.interface';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 
@@ -14,7 +14,7 @@ export class DepartmentService {
       const created = this.departmentRepository.create(department);
       return this.departmentRepository.save(created);
     } catch (error) {
-      throw new NotFoundException('Error creating department');
+      throw new BadRequestException('Error creating department');
     }
   }
 
@@ -48,7 +48,7 @@ export class DepartmentService {
         offset: Number(query?.offset) || 0,
       };
     } catch (error) {
-      throw new NotFoundException('department not found');
+      throw new BadRequestException('department not found');
     }
   }
 
@@ -59,11 +59,11 @@ export class DepartmentService {
         department,
       );
       if (!affected) {
-        throw new NotFoundException('department not found');
+        throw new BadRequestException('department not found');
       }
       return null;
     } catch (error) {
-      throw new NotFoundException('department not found');
+      throw new BadRequestException('department not found');
     }
   }
 
@@ -71,11 +71,11 @@ export class DepartmentService {
     try {
       const { affected } = await this.departmentRepository.delete({ id });
       if (!affected) {
-        throw new NotFoundException('department not found');
+        throw new BadRequestException('department not found');
       }
       return null;
     } catch (error) {
-      throw new NotFoundException('department not found');
+      throw new BadRequestException('department not found');
     }
   }
 
@@ -84,17 +84,14 @@ export class DepartmentService {
     collaboratorId,
   }): Promise<IDepartment> {
     try {
-      const department = await this.departmentRepository.findOneOrFail({
+      const department = await this.departmentRepository.findOne({
         where: { id: departmentId },
         relations: ['collaborators'],
       });
-      if (!department) {
-        throw new NotFoundException('department not found');
-      }
       department.collaborators.push({ id: collaboratorId } as any);
       return this.departmentRepository.save(department);
     } catch (error) {
-      throw new NotFoundException('department not found');
+      throw new Error(error.message);
     }
   }
 
@@ -103,19 +100,19 @@ export class DepartmentService {
     collaboratorId,
   }): Promise<IDepartment> {
     try {
-      const department = await this.departmentRepository.findOneOrFail({
+      const department = await this.departmentRepository.findOne({
         where: { id: departmentId },
         relations: ['collaborators'],
       });
       if (!department) {
-        throw new NotFoundException('department not found');
+        throw new BadRequestException('department not found');
       }
       department.collaborators = department.collaborators.filter(
         (collaborator) => collaborator.id !== collaboratorId,
       );
       return this.departmentRepository.save(department);
     } catch (error) {
-      throw new NotFoundException('department not found');
+      throw new BadRequestException('department not found');
     }
   }
 }

@@ -32,11 +32,29 @@ export class ReportService {
       };
 
       if (query?.type) {
-        findOptions.where['title'] = Like(`%${query.type}%`);
+        findOptions.where['type'] = Like(`%${query.type}%`);
       }
 
       if (query?.id) {
         findOptions.where['id'] = Like(`%${query.id}%`);
+      }
+
+      if (query?.equipmentId) {
+        findOptions.where['equipment'] = {
+          id: query.equipmentId,
+        };
+      }
+
+      if (query?.collaboratorId) {
+        findOptions.where['collaborator'] = {
+          id: query.collaboratorId,
+        };
+      }
+
+      if (query?.changeById) {
+        findOptions.where['changeBy'] = {
+          id: query.changeById,
+        };
       }
 
       const [reports, total] =

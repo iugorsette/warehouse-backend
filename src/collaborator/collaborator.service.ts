@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { ICollaborator } from './interfaces/collaborator.interface';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { DepartmentService } from 'src/department/department.service';
@@ -27,7 +27,7 @@ export class CollaboratorService {
       }
       return created;
     } catch (error) {
-      throw new NotFoundException('Error creating collaborator');
+      throw new BadRequestException('Error creating collaborator');
     }
   }
 
@@ -66,49 +66,48 @@ export class CollaboratorService {
         offset: Number(query?.offset) || 0,
       };
     } catch (error) {
-      throw new NotFoundException('Collaborator not found');
+      throw new BadRequestException('Collaborator not found');
     }
   }
 
-  async update(collaborator: ICollaborator, id: string): Promise<void> {
-    try {
-      const { department } = await this.collaboratorRepository.findOneOrFail({
-        where: { id },
-        relations: ['department'],
-      });
+  async update(
+    collaborator: Partial<ICollaborator>,
+    id: string,
+  ): Promise<void> {
+    const { department } = await this.collaboratorRepository.findOneOrFail({
+      where: { id },
+      relations: ['department'],
+    });
 
-      if (department?.id !== collaborator.departmentId && department?.id) {
-        const desvinculate = {
-          departmentId: department.id,
-          collaboratorId: id,
-        };
+    if (department?.id !== collaborator.departmentId && department?.id) {
+      const desvinculate = {
+        departmentId: department.id,
+        collaboratorId: id,
+      };
 
-        this.departmentService.removeCollaboratorFromDepartment(desvinculate);
-      }
-      if (
-        collaborator.departmentId &&
-        department?.id !== collaborator.departmentId
-      ) {
-        const vinculate = {
-          departmentId: collaborator.departmentId,
-          collaboratorId: id,
-        };
-        this.departmentService.addCollaboratorToDepartment(vinculate);
-      }
-
-      delete collaborator.departmentId;
-
-      const { affected } = await this.collaboratorRepository.update(
-        { id },
-        collaborator,
-      );
-      if (!affected) {
-        throw new NotFoundException('Collaborator not found');
-      }
-      return null;
-    } catch (error) {
-      throw new NotFoundException('Collaborator not found');
+      this.departmentService.removeCollaboratorFromDepartment(desvinculate);
     }
+    if (
+      collaborator.departmentId &&
+      department?.id !== collaborator.departmentId
+    ) {
+      const vinculate = {
+        departmentId: collaborator.departmentId,
+        collaboratorId: id,
+      };
+      this.departmentService.addCollaboratorToDepartment(vinculate);
+    }
+
+    delete collaborator.departmentId;
+
+    const { affected } = await this.collaboratorRepository.update(
+      { id },
+      collaborator,
+    );
+    if (!affected) {
+      throw new BadRequestException('Collaborator not found');
+    }
+    return null;
   }
 
   async delete(id: string): Promise<void> {
@@ -117,11 +116,11 @@ export class CollaboratorService {
         id,
       });
       if (affected === 0) {
-        throw new NotFoundException('Collaborator not found');
+        throw new BadRequestException('Collaborator not found');
       }
       return null;
     } catch (error) {
-      throw new NotFoundException('Collaborator not found');
+      throw new BadRequestException('Collaborator not found');
     }
   }
 }

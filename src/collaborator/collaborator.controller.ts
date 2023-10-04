@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  BadRequestException,
   Post,
   Put,
   Query,
@@ -17,21 +18,40 @@ import { CollaboratorService } from './collaborator.service';
 export class CollaboratorController {
   constructor(private readonly collaboratorService: CollaboratorService) {}
   @Get()
-  findAll(@Query() query: IQuery): Promise<QueryResponse<ICollaborator>> {
+  async findAll(@Query() query: IQuery): Promise<QueryResponse<ICollaborator>> {
     if (Number(query?.offset) > 0) {
       query.offset = Number(query.offset) * Number(query.limit);
     }
-    return this.collaboratorService.findAll(query);
+    try {
+      const todo = await this.collaboratorService.findAll(query);
+      if (!todo) throw new BadRequestException();
+      return todo;
+    } catch (err) {
+      throw new BadRequestException();
+    }
+    // return this.collaboratorService.findAll(query);
   }
 
   @Post()
   create(@Body() collaborator: ICollaborator) {
-    return this.collaboratorService.create(collaborator);
+    try {
+      const response = this.collaboratorService.create(collaborator);
+      if (!response) throw new BadRequestException();
+      return response;
+    } catch (err) {
+      throw new BadRequestException();
+    }
   }
 
   @Put()
   update(@Body() collaborator: ICollaborator, @Query('id') id: string) {
-    return this.collaboratorService.update(collaborator, id);
+    try {
+      const response = this.collaboratorService.update(collaborator, id);
+      if (!response) throw new BadRequestException();
+      return response;
+    } catch (err) {
+      throw new BadRequestException();
+    }
   }
 
   @Delete()
