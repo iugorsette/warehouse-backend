@@ -1,6 +1,6 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { IItem } from './interfaces/item.interface';
-import { FindManyOptions, Like, Repository } from 'typeorm';
+import { FindManyOptions, IsNull, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class ItemService {
@@ -40,6 +40,16 @@ export class ItemService {
           createdAt: 'DESC',
         },
       };
+
+      if (query?.showStock === 'true') {
+        findOptions.relationLoadStrategy = 'join';
+
+        findOptions.where = {
+          equipment: {
+            id: IsNull(),
+          },
+        };
+      }
 
       if (query?.property) {
         findOptions.where['property'] = Like(`%${query.property}%`);
