@@ -1,5 +1,5 @@
-import { Collaborator } from '../entity/collaborator.entity';
 import { DataSource } from 'typeorm';
+import { Collaborator } from './collaborator.entity';
 
 export const collaboratorProviders = [
   {

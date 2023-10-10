@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { DatabaseModule } from 'src/repository/database.module';
-import { equipmentProviders } from 'src/repository/providers/equipment.providers';
-import { collaboratorProviders } from 'src/repository/providers/collaborator.providers';
-import { reportProviders } from 'src/repository/providers/report.providers';
 import { ReportController } from './report.controller';
 import { AuthModule } from 'src/auth/auth.module';
+import { reportProviders } from './repository/report.providers';
+import { collaboratorProviders } from 'src/collaborator/repository/collaborator.providers';
+import { equipmentProviders } from 'src/equipmet/repository/equipment.providers';
 
 @Module({
   imports: [DatabaseModule, AuthModule],

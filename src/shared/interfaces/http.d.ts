@@ -4,6 +4,7 @@ interface QueryResponse<T> {
 
 interface IQuery {
   id?: string;
+  register?: string;
   offset?: number;
   total?: number;
   limit?: number;

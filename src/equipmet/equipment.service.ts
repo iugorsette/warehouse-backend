@@ -23,13 +23,17 @@ export class EquipmentService {
     try {
       const created = this.equipmentRepository.create(equipment);
       const { id } = await this.equipmentRepository.save(created);
+      if (!equipment.register) {
+        this.equipmentRepository.update({ id }, { register: id });
+      }
+      await this.equipmentRepository.save(created);
 
-      if (equipment.items.length > 0) {
+      if (equipment?.items?.length > 0) {
         equipment.items.forEach((item) => {
           this.itemService.create({ ...item, equipment: id });
         });
       }
-      if (equipment.collaborators.length > 0) {
+      if (equipment?.collaborators?.length > 0) {
         equipment.collaborators.forEach((collaborator) => {
           this.addCollaboratorToEquipment({
             equipmentId: id,
@@ -57,6 +61,9 @@ export class EquipmentService {
         },
       };
 
+      if (query?.register) {
+        findOptions.where['register'] = Like(`%${query.register}%`);
+      }
       if (query?.title) {
         findOptions.where['title'] = Like(`%${query.title}%`);
       }

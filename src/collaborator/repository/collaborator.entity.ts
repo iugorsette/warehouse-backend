@@ -1,3 +1,5 @@
+import { Department } from 'src/department/repository/deparment.entity';
+import { Equipment } from 'src/equipmet/repository/equipment.entity';
 import {
   Entity,
   Column,
@@ -9,8 +11,6 @@ import {
   JoinTable,
   JoinColumn,
 } from 'typeorm';
-import { Department } from './deparment.entity';
-import { Equipment } from './equipment.entity';
 
 @Entity()
 export class Collaborator {

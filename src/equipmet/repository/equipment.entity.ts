@@ -1,3 +1,5 @@
+import { Collaborator } from 'src/collaborator/repository/collaborator.entity';
+import { Item } from 'src/item/repository/item.entity';
 import {
   Entity,
   Column,
@@ -7,13 +9,14 @@ import {
   OneToMany,
   ManyToMany,
 } from 'typeorm';
-import { Item } from './item.entity';
-import { Collaborator } from './collaborator.entity';
 
 @Entity()
 export class Equipment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ length: 500, unique: true, nullable: true })
+  register: string | null;
 
   @Column({ length: 500 })
   title: string;

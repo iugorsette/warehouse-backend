@@ -1,23 +1,20 @@
+import { Collaborator } from 'src/collaborator/repository/collaborator.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
+  OneToMany,
 } from 'typeorm';
-import { Equipment } from './equipment.entity';
 
 @Entity()
-export class Item {
+export class Department {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 500 })
-  property: string;
-
-  @Column()
-  value: string;
+  @Column({ length: 500, unique: true })
+  name: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
@@ -25,6 +22,6 @@ export class Item {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 
-  @ManyToOne(() => Equipment, (equipment) => equipment.items)
-  equipment: Equipment;
+  @OneToMany(() => Collaborator, (collaborator) => collaborator.department)
+  collaborators: Collaborator[];
 }

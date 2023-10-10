@@ -3,6 +3,7 @@ import { IItem } from 'src/item/interfaces/item.interface';
 
 export interface IEquipment {
   id: string;
+  register: string;
   title: string;
   description: string;
   items?: IItem[];

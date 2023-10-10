@@ -29,7 +29,6 @@ export class CollaboratorController {
     } catch (err) {
       throw new BadRequestException();
     }
-    // return this.collaboratorService.findAll(query);
   }
 
   @Post()

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from 'src/repository/database.module';
-import { collaboratorProviders } from 'src/repository/providers/collaborator.providers';
 import { CollaboratorController } from './collaborator.controller';
 import { CollaboratorService } from './collaborator.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { DepartmentService } from 'src/department/department.service';
-import { departmentProviders } from 'src/repository/providers/department.providers';
+import { collaboratorProviders } from './repository/collaborator.providers';
+import { departmentProviders } from 'src/department/repository/department.providers';
 
 @Module({
   imports: [DatabaseModule, AuthModule],

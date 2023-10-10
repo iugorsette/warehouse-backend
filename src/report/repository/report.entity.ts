@@ -6,10 +6,10 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Equipment } from './equipment.entity';
-import { Collaborator } from './collaborator.entity';
 import { MovementTypes } from 'src/report/interfaces/report';
+import { Collaborator } from 'src/collaborator/repository/collaborator.entity';
+import { Equipment } from 'src/equipmet/repository/equipment.entity';
+import { User } from 'src/users/repository/user.entity';
 
 @Entity()
 export class Report {
