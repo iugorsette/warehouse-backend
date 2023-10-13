@@ -11,6 +11,7 @@ import { IItem } from './interfaces/item.interface';
 import { ItemService } from './item.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
+import { CreateItemDto } from './dto/create-item.dto';
 
 @UseGuards(AuthGuard)
 @Controller('items')
@@ -25,8 +26,8 @@ export class ItemController {
   }
 
   @Post()
-  create(@Body() item: IItem) {
-    return this.itemService.create(item);
+  create(@Body() createItemDto: CreateItemDto) {
+    return this.itemService.create(createItemDto);
   }
 
   @Put()

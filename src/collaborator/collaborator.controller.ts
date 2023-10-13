@@ -12,6 +12,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { ICollaborator } from './interfaces/collaborator.interface';
 import { CollaboratorService } from './collaborator.service';
+import { CreateCollaboratorDto } from './dto/create-collaborator.dto';
 
 @UseGuards(AuthGuard)
 @Controller('collaborator')
@@ -32,9 +33,9 @@ export class CollaboratorController {
   }
 
   @Post()
-  create(@Body() collaborator: ICollaborator) {
+  create(@Body() createCollaboratorDto: CreateCollaboratorDto) {
     try {
-      const response = this.collaboratorService.create(collaborator);
+      const response = this.collaboratorService.create(createCollaboratorDto);
       if (!response) throw new BadRequestException();
       return response;
     } catch (err) {

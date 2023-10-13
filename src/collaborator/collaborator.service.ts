@@ -2,6 +2,7 @@ import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { ICollaborator } from './interfaces/collaborator.interface';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { DepartmentService } from 'src/department/department.service';
+import { CreateCollaboratorDto } from './dto/create-collaborator.dto';
 
 @Injectable()
 export class CollaboratorService {
@@ -11,10 +12,10 @@ export class CollaboratorService {
     private departmentService: DepartmentService,
   ) {}
 
-  async create(collaborator: ICollaborator): Promise<ICollaborator> {
+  async create(collaborator: CreateCollaboratorDto): Promise<ICollaborator> {
     try {
       const departmentId = collaborator.departmentId;
-      delete collaborator.department;
+      // delete collaborator.department;
       const created = this.collaboratorRepository.create(collaborator);
       const { id } = await this.collaboratorRepository.save(created);
 

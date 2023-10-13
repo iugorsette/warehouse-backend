@@ -1,6 +1,7 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { IDepartment } from './interfaces/department.interface';
 import { FindManyOptions, Like, Repository } from 'typeorm';
+import { CreateDepartmentDto } from './dto/create-department.dto';
 
 @Injectable()
 export class DepartmentService {
@@ -9,7 +10,7 @@ export class DepartmentService {
     private departmentRepository: Repository<IDepartment>,
   ) {}
 
-  async create(department: IDepartment): Promise<IDepartment> {
+  async create(department: CreateDepartmentDto): Promise<IDepartment> {
     try {
       const created = this.departmentRepository.create(department);
       return this.departmentRepository.save(created);

@@ -11,6 +11,7 @@ import { EquipmentService } from './equipment.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { IEquipment, Vinculate } from './interfaces/equipment.interface';
+import { CreateEquipmentDto } from './dto/create-equipment.dto';
 
 @UseGuards(AuthGuard)
 @Controller('equipments')
@@ -25,13 +26,13 @@ export class EquipmentController {
   }
 
   @Post()
-  create(@Body() equipment: IEquipment) {
-    return this.equipmentService.create(equipment);
+  create(@Body() createEquipmentDto: CreateEquipmentDto) {
+    return this.equipmentService.create(createEquipmentDto);
   }
 
   @Put()
-  update(@Body() equipment: IEquipment, @Query('id') id: string) {
-    return this.equipmentService.update(equipment, id);
+  update(@Body() equipmentDto: CreateEquipmentDto, @Query('id') id: string) {
+    return this.equipmentService.update(equipmentDto, id);
   }
 
   @Post('vinculateCollaborator')

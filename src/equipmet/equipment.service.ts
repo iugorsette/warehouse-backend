@@ -6,6 +6,7 @@ import { ReportService } from 'src/report/report.service';
 import { MovementTypes } from 'src/report/interfaces/report';
 import { AuthService } from 'src/auth/auth.service';
 import { ItemService } from 'src/item/item.service';
+import { CreateEquipmentDto } from './dto/create-equipment.dto';
 
 @Injectable()
 export class EquipmentService {
@@ -19,7 +20,7 @@ export class EquipmentService {
     private readonly itemService: ItemService,
   ) {}
 
-  async create(equipment: IEquipment): Promise<IEquipment> {
+  async create(equipment: CreateEquipmentDto): Promise<IEquipment> {
     try {
       const created = this.equipmentRepository.create(equipment);
       const { id } = await this.equipmentRepository.save(created);
@@ -117,7 +118,7 @@ export class EquipmentService {
     }
   }
 
-  async update(equipment: IEquipment, id: string): Promise<any> {
+  async update(equipment: CreateEquipmentDto, id: string): Promise<any> {
     try {
       const { items } = await this.equipmentRepository.findOneOrFail({
         where: { id },

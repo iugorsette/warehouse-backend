@@ -11,6 +11,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { IDepartment } from './interfaces/department.interface';
 import { DepartmentService } from './department.service';
+import { CreateDepartmentDto } from './dto/create-department.dto';
 
 @UseGuards(AuthGuard)
 @Controller('department')
@@ -25,8 +26,8 @@ export class DepartmentController {
   }
 
   @Post()
-  create(@Body() department: IDepartment) {
-    return this.departmentService.create(department);
+  create(@Body() departmentDto: CreateDepartmentDto) {
+    return this.departmentService.create(departmentDto);
   }
 
   @Put()

@@ -1,6 +1,7 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { IItem } from './interfaces/item.interface';
 import { FindManyOptions, IsNull, Like, Repository } from 'typeorm';
+import { CreateItemDto } from './dto/create-item.dto';
 
 @Injectable()
 export class ItemService {
@@ -8,7 +9,7 @@ export class ItemService {
     @Inject('ITEM_REPOSITORY') private itemRepository: Repository<IItem>,
   ) {}
 
-  async create(item: IItem): Promise<IItem> {
+  async create(item: CreateItemDto): Promise<IItem> {
     try {
       const created = this.itemRepository.create(item);
       return this.itemRepository.save(created);
