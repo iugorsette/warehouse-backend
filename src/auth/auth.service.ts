@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from 'src/users/interfaces/users.interface';
+import { EncryptService } from 'src/shared/providers/encrypt.service';
 
 @Injectable()
 export class AuthService {
@@ -9,12 +10,17 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private encryptService: EncryptService,
   ) {}
 
   async signIn(username: string, pass: string) {
     const user = await this.usersService.findOne(username);
-    if (user?.password !== pass) {
-      throw new UnauthorizedException();
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    const match = await this.encryptService.compare(pass, user.password);
+    if (!match) {
+      throw new UnauthorizedException('Invalid credentials');
     }
     const payload = { sub: user.id, username: user.username };
     return {
