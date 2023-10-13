@@ -3,6 +3,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { IUser } from 'src/users/interfaces/users.interface';
 import { EncryptService } from 'src/shared/providers/encrypt.service';
+import { SignInDto } from './dto/sing-in-dto';
 
 @Injectable()
 export class AuthService {
@@ -13,12 +14,12 @@ export class AuthService {
     private encryptService: EncryptService,
   ) {}
 
-  async signIn(username: string, pass: string) {
+  async signIn({ username, password }: SignInDto) {
     const user = await this.usersService.findOne(username);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
-    const match = await this.encryptService.compare(pass, user.password);
+    const match = await this.encryptService.compare(password, user.password);
     if (!match) {
       throw new UnauthorizedException('Invalid credentials');
     }
