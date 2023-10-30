@@ -1,5 +1,6 @@
 import { Collaborator } from 'src/collaborator/repository/collaborator.entity';
 import { Item } from 'src/item/repository/item.entity';
+import { Maintaince } from 'src/maintaince/repository/maintaince.entity';
 import {
   Entity,
   Column,
@@ -35,4 +36,7 @@ export class Equipment {
 
   @ManyToMany(() => Collaborator, (collaborator) => collaborator.equipments)
   collaborators: Collaborator[];
+
+  @OneToMany(() => Maintaince, (maintaince) => maintaince.equipment)
+  maintainces: Maintaince[];
 }

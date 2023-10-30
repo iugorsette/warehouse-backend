@@ -7,6 +7,7 @@ import { CollaboratorModule } from './collaborator/collaborator.module';
 import { SharedModule } from './shared/shared.module';
 import { DepartmentModule } from './department/department.module';
 import { ReportModule } from './report/report.module';
+import { MaintainceModule } from './maintaince/maintaince.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ReportModule } from './report/report.module';
     SharedModule,
     DepartmentModule,
     ReportModule,
+    MaintainceModule,
   ],
   controllers: [],
   providers: [],

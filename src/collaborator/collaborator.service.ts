@@ -40,8 +40,8 @@ export class CollaboratorService {
         where: {},
         relations: ['department', 'equipments'],
         order: {
+          name: 'ASC',
           updatedAt: 'DESC',
-          createdAt: 'DESC',
         },
       };
 

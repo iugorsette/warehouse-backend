@@ -12,7 +12,10 @@ export const databaseProviders = [
         password: process.env.MYSQL_PASSWORD,
         database: process.env.MYSQL_DATABASE,
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: true,
+        migrations: [__dirname + '/../migration/*{.ts,.js}'],
+        migrationsTableName: 'migrations',
+        migrationsRun: true,
+        // synchronize: true,
         // logging: true,
       });
 

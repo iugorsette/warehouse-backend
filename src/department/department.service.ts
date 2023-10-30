@@ -27,6 +27,7 @@ export class DepartmentService {
         where: {},
         relations: ['collaborators'],
         order: {
+          name: 'ASC',
           updatedAt: 'DESC',
           createdAt: 'DESC',
         },

@@ -55,7 +55,7 @@ export class EquipmentService {
         take: query?.limit || 100,
         skip: query?.offset || 0,
         where: {},
-        relations: ['items', 'collaborators'],
+        relations: ['items', 'collaborators', 'collaborators.department'],
         order: {
           updatedAt: 'DESC',
           createdAt: 'DESC',
